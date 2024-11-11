@@ -33,6 +33,8 @@
     "trgm",
     "truncatewords",
     "urlpatterns",
+    "viewset",
+    "viewutil",
     "wsgi",
     "Xutf"
   ]
