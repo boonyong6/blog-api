@@ -1,14 +1,15 @@
-from django.urls import include, path
+from django.urls import path, include
 from rest_framework import routers
 from . import views
-from .feeds import LatestPostsFeed
 from .api import views as api_views
+from .feeds import LatestPostsFeed
 
 app_name = "blog"  # Application namespace
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r"posts", api_views.PostViewSet)
+router.register(r"tags", api_views.TagViewSet)
 
 urlpatterns = [
     # * Post views
