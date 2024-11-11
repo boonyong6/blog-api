@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import viewsets, status
@@ -7,7 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from taggit.models import Tag
 from .serializers import PostSerializer, TagSerializer
-from .viewutil import get_pagable_response
+from .views_utils import get_pagable_response
 from ..models import Post
 
 
@@ -15,6 +16,21 @@ from ..models import Post
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Post.published.all()
     serializer_class = PostSerializer
+
+    def get_object(self):
+        url_kwargs: dict[str, str] = self.kwargs
+
+        pk = url_kwargs.get("pk")
+        if pk is not None:
+            return get_object_or_404(Post.published.all(), pk=pk)
+
+        lookup_kwargs = {
+            "publish__year": url_kwargs.get("year"),
+            "publish__month": url_kwargs.get("month"),
+            "publish__day": url_kwargs.get("day"),
+            "slug": url_kwargs.get("slug"),
+        }
+        return get_object_or_404(Post.published.all(), **lookup_kwargs)
 
     @action(detail=False)
     def latest(self, request: Request, *args, **kwargs):

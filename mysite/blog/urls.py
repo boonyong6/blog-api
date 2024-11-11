@@ -27,4 +27,9 @@ urlpatterns = [
     path("feed/", LatestPostsFeed(), name="post_feed"),
     path("search/", views.post_search, name="post_search"),
     path("api/", include(router.urls)),
+    path(
+        "api/posts/<int:year>/<int:month>/<int:day>/<slug:slug>/",
+        api_views.PostViewSet.as_view({"get": "retrieve"}),
+        name="post-detail",
+    ),
 ]
