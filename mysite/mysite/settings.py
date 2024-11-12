@@ -45,12 +45,14 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "taggit",
     "rest_framework",
+    "corsheaders",
     "blog.apps.BlogConfig",  # Activate the app by registering its config.
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Must be placed before `CommonMiddleware` or `WhiteNoiseMiddleware`.
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -162,3 +164,10 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
     ),
 }
+
+# django-cors-headers
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://boonyong6.github.io$",
+    r"^https?://localhost:\d{4,5}$",
+]
