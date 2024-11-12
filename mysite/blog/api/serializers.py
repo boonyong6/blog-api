@@ -7,12 +7,13 @@ from . import serializers_utils
 
 # Serializers define the API representation.
 class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField()
     author = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="username"
     )
     tags = TagListSerializerField()
-    url = serializers_utils.PostHyperlink(view_name="blog:post-detail")
-    id = serializers.IntegerField()
+    url = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
+    url_alt = serializers_utils.PostHyperlink(view_name="blog:post-detail")
 
     class Meta:
         model = Post
