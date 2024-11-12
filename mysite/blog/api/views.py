@@ -59,6 +59,27 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
         )
         return get_pagable_response(self, similar_posts, self.get_serializer)
 
+    @action(detail=True)
+    def similar(self, request: Request, *args, **kwargs):
+        """
+        Supported query string:\n
+        - `limit`: Accepts an integer value. (e.g. `?limit=10`)
+        """
+        limit_text = request.query_params.get("limit", "5")
+        if not limit_text.isdigit():
+            raise ParseError("`limit` query param must be an integer.")
+
+        post: Post = self.get_object()
+        post_tags_ids = post.tags.values_list("id", flat=True)
+        similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(
+            id=post.id
+        )
+        similar_posts = similar_posts.annotate(same_tags=Count("tags")).order_by(
+            "-same_tags", "-publish"
+        )[: int(limit_text)]
+
+        return get_pagable_response(self, similar_posts, self.get_serializer)
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
