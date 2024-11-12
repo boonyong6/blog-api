@@ -12,8 +12,8 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
         many=False, read_only=True, slug_field="username"
     )
     tags = TagListSerializerField()
-    url = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
-    url_alt = serializers_utils.PostHyperlink(view_name="blog:post-detail")
+    url = serializers_utils.PostHyperlink(view_name="blog:post-detail")
+    url_alt = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
 
     class Meta:
         model = Post
