@@ -5,6 +5,7 @@
     "capfirst",
     "changefreq",
     "createsuperuser",
+    "djangorestframework",
     "dumpdata",
     "endswith",
     "endwith",
