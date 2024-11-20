@@ -22,7 +22,9 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     count = serializers.IntegerField()
-    url = serializers.HyperlinkedIdentityField(view_name="blog:tag-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="blog:tag-detail", lookup_field="slug"
+    )
 
     class Meta:
         model = Tag

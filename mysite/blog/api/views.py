@@ -89,12 +89,17 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
 
-    queryset = Tag.objects.filter(
-        taggit_taggeditem_items__content_type__app_label="blog",
-        taggit_taggeditem_items__content_type__model="post",
-        taggit_taggeditem_items__object_id__in=post_ids,
-    ).annotate(count=Count("*"))
+    queryset = (
+        Tag.objects.filter(
+            taggit_taggeditem_items__content_type__app_label="blog",
+            taggit_taggeditem_items__content_type__model="post",
+            taggit_taggeditem_items__object_id__in=post_ids,
+        )
+        .annotate(count=Count("*"))
+        .order_by("-count")
+    )
     serializer_class = TagSerializer
+    lookup_field = "slug"
 
     @action(detail=True)
     def posts(self, request: Request, *args, **kwargs):
