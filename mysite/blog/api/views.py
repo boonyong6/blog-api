@@ -21,12 +21,11 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
         url_kwargs: dict[str, str] = self.kwargs
 
         pk = url_kwargs.get("pk")
-        if not pk.isdigit():
-            raise ParseError(
-                f"`pk` param must be an integer. E.g. `/api/posts/6/`. pk: {pk}"
-            )
-
         if pk is not None:
+            if not pk.isdigit():
+                raise ParseError(
+                    f"`pk` param must be an integer. E.g. `/api/posts/6/`. pk: {pk}"
+                )
             return get_object_or_404(Post.published.all(), pk=pk)
 
         lookup_kwargs = {
