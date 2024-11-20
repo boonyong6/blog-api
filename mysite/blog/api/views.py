@@ -1,3 +1,4 @@
+from functools import partial
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.contrib.postgres.search import TrigramSimilarity
@@ -15,7 +16,6 @@ from ..models import Post
 # ViewSets define the view behavior.
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Post.published.all()
-    serializer_class = PostSerializer
 
     def get_object(self):
         url_kwargs: dict[str, str] = self.kwargs
@@ -24,7 +24,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
         if pk is not None:
             if not pk.isdigit():
                 raise ParseError(
-                    f"`pk` param must be an integer. E.g. `/api/posts/6/`. pk: {pk}"
+                    f"`pk` URL param must be an integer, such as /api/posts/6/"
                 )
             return get_object_or_404(Post.published.all(), pk=pk)
 
@@ -35,6 +35,18 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
             "slug": url_kwargs.get("slug"),
         }
         return get_object_or_404(Post.published.all(), **lookup_kwargs)
+
+    def get_serializer(self, *args, **kwargs):
+        # Discard duplicate keyword argument.
+        kwargs.pop("context", None)
+
+        PartialSerializer = partial(
+            PostSerializer, *args, **kwargs, context={"request": self.request}
+        )
+
+        if self.action in ["list", "latest", "search", "similar"]:
+            return PartialSerializer(exclude=["body"])
+        return PartialSerializer()
 
     @action(detail=False)
     def latest(self, request: Request, *args, **kwargs):

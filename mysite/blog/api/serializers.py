@@ -19,6 +19,16 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
         model = Post
         fields = "__all__"
 
+    def __init__(self, *args, **kwargs):
+        # Don't pass the `exclude` arg up to the superclass.
+        excluded_fields = kwargs.pop("exclude", [])
+
+        super().__init__(*args, **kwargs)
+
+        # Exclude fields specified in the `exclude` argument.
+        for field in excluded_fields:
+            self.fields.pop(field, None)
+
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     count = serializers.IntegerField()
