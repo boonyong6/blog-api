@@ -1,17 +1,18 @@
 from functools import partial
+from typing import cast
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import viewsets, status
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from taggit.models import Tag
-from .serializers import PostSerializer, TagSerializer
+from .serializers import PostSerializer, TagSerializer, CommentSerializer
 from .views_utils import get_pagable_response
 from .pagination import DynamicPageNumberPagination
-from ..models import Post
+from ..models import Post, Comment
 
 
 # ViewSets define the view behavior.
@@ -122,8 +123,6 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
-    pagination_class = staticmethod(partial(DynamicPageNumberPagination, page_size=20))
-
     queryset = (
         Tag.objects.filter(
             taggit_taggeditem_items__content_type__app_label="blog",
@@ -135,6 +134,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = TagSerializer
     lookup_field = "slug"
+    pagination_class = staticmethod(partial(DynamicPageNumberPagination, page_size=20))
 
     @action(detail=True)
     def posts(self, request: Request, *args, **kwargs):
@@ -146,3 +146,28 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
             staticmethod(partial(PostSerializer, exclude=["body"])),
             PostViewSet.pagination_class,
         )
+
+
+class CommentViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    Supported query string:\n
+    - `post_id`: Accepts an integer value. (e.g. `?post_id=6`)
+    """
+
+    queryset = Comment.objects.filter(active=True)
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        post_id = cast(Request, self.request).query_params.get("post_id")
+        if post_id is None:
+            return self.queryset
+
+        if not post_id.isdigit():
+            raise ParseError("`post_id` query param must be an integer.")
+
+        return self.queryset.filter(post=post_id)
