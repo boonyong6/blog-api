@@ -10,12 +10,14 @@ from rest_framework.response import Response
 from taggit.models import Tag
 from .serializers import PostSerializer, TagSerializer
 from .views_utils import get_pagable_response
+from .pagination import DynamicPageNumberPagination
 from ..models import Post
 
 
 # ViewSets define the view behavior.
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Post.published.all()
+    pagination_class = partial(DynamicPageNumberPagination, page_size=5)
 
     def get_object(self):
         url_kwargs: dict[str, str] = self.kwargs
@@ -120,6 +122,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
+    pagination_class = partial(DynamicPageNumberPagination, page_size=20)
 
     queryset = (
         Tag.objects.filter(
@@ -138,5 +141,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
         tag = self.get_object()
         tag_posts = Post.published.filter(tags__in=[tag])
         return get_pagable_response(
-            self, tag_posts, partial(PostSerializer, exclude=["body"])
+            self,
+            tag_posts,
+            partial(PostSerializer, exclude=["body"]),
+            PostViewSet.pagination_class,
         )
