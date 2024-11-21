@@ -17,7 +17,7 @@ from ..models import Post
 # ViewSets define the view behavior.
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Post.published.all()
-    pagination_class = partial(DynamicPageNumberPagination, page_size=5)
+    pagination_class = staticmethod(partial(DynamicPageNumberPagination, page_size=5))
 
     def get_object(self):
         url_kwargs: dict[str, str] = self.kwargs
@@ -122,7 +122,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
-    pagination_class = partial(DynamicPageNumberPagination, page_size=20)
+    pagination_class = staticmethod(partial(DynamicPageNumberPagination, page_size=20))
 
     queryset = (
         Tag.objects.filter(
@@ -143,6 +143,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
         return get_pagable_response(
             self,
             tag_posts,
-            partial(PostSerializer, exclude=["body"]),
+            staticmethod(partial(PostSerializer, exclude=["body"])),
             PostViewSet.pagination_class,
         )
