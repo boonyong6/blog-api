@@ -20,14 +20,28 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        # Don't pass the `exclude` arg up to the superclass.
-        excluded_fields = kwargs.pop("exclude", [])
+        # Don't pass the `fields` and `exclude` arg up to the superclass.
+        fields = kwargs.pop("fields", None)
+        excluded_fields = kwargs.pop("exclude", None)
+
+        if fields is not None and excluded_fields is not None:
+            raise AssertionError(
+                f"Cannot set both `fields` and `exclude` arguments when instantiating {PostSerializer.__name__}."
+            )
 
         super().__init__(*args, **kwargs)
 
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
         # Exclude fields specified in the `exclude` argument.
-        for field in excluded_fields:
-            self.fields.pop(field, None)
+        if excluded_fields is not None:
+            for field in excluded_fields:
+                self.fields.pop(field, None)
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):

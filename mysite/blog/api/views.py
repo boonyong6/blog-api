@@ -96,6 +96,27 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 
         return get_pagable_response(self, similar_posts, self.get_serializer)
 
+    def retrieve(self, request, *args, **kwargs):
+        curr_post = self.get_object()
+        prev_post = Post.published.filter(id__lt=curr_post.id).order_by("-id").first()
+        next_post = Post.published.filter(id__gt=curr_post.id).order_by("id").first()
+
+        fields = ["url", "url_alt", "id", "title", "slug", "publish"]
+
+        curr_data = self.get_serializer(curr_post).data
+        prev_data = (
+            self.get_serializer(prev_post, fields=fields).data
+            if prev_post is not None
+            else None
+        )
+        next_data = (
+            self.get_serializer(next_post, fields=fields).data
+            if next_post is not None
+            else None
+        )
+
+        return Response({**curr_data, "previous": prev_data, "next": next_data})
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     post_ids = Post.published.values("id")
@@ -116,4 +137,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     def posts(self, request: Request, *args, **kwargs):
         tag = self.get_object()
         tag_posts = Post.published.filter(tags__in=[tag])
-        return get_pagable_response(self, tag_posts, PostSerializer)
+        return get_pagable_response(
+            self, tag_posts, partial(PostSerializer, exclude=["body"])
+        )
