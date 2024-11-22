@@ -35,7 +35,7 @@ urlpatterns = [
         name="post-detail",
     ),
     path(
-        "api/posts/<int:year>/<int:month>/<int:day>/<slug:slug>/similar",
+        "api/posts/<int:year>/<int:month>/<int:day>/<slug:slug>/similar/",
         api_views.PostViewSet.as_view({"get": "similar"}),
         name="post-similar",
     ),
