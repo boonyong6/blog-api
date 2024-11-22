@@ -9,10 +9,15 @@ from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from taggit.models import Tag
-from .serializers import PostSerializer, TagSerializer, CommentSerializer
+from .serializers import (
+    PostSerializer,
+    ProjectSerializer,
+    TagSerializer,
+    CommentSerializer,
+)
 from .views_utils import get_pagable_response
 from .pagination import DynamicPageNumberPagination
-from ..models import Post, Comment
+from ..models import Post, Comment, Project
 
 
 # ViewSets define the view behavior.
@@ -171,3 +176,8 @@ class CommentViewSet(
             raise ParseError("`post_id` query param must be an integer.")
 
         return self.queryset.filter(post=post_id)
+
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer

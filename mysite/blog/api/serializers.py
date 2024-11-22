@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from taggit.models import Tag
 from taggit.serializers import TagListSerializerField, TaggitSerializer
-from ..models import Post, Comment
+from ..models import Post, Comment, Project
 from . import serializers_utils
 
 
@@ -63,4 +63,12 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
+        fields = "__all__"
+
+
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="blog:project-detail")
+
+    class Meta:
+        model = Project
         fields = "__all__"

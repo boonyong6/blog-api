@@ -11,6 +11,7 @@ router = routers.DefaultRouter()
 router.register(r"posts", api_views.PostViewSet)
 router.register(r"tags", api_views.TagViewSet)
 router.register(r"comments", api_views.CommentViewSet)
+router.register(r"projects", api_views.ProjectViewSet)
 
 urlpatterns = [
     # * Post views
