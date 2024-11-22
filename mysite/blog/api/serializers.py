@@ -7,13 +7,13 @@ from . import serializers_utils
 
 # Serializers define the API representation.
 class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
+    url = serializers_utils.PostHyperlink(view_name="blog:post-detail")
+    url_alt = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
     id = serializers.IntegerField()
     author = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="username"
     )
     tags = TagListSerializerField()
-    url = serializers_utils.PostHyperlink(view_name="blog:post-detail")
-    url_alt = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
 
     class Meta:
         model = Post
@@ -45,10 +45,11 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
-    count = serializers.IntegerField()
     url = serializers.HyperlinkedIdentityField(
         view_name="blog:tag-detail", lookup_field="slug"
     )
+    id = serializers.IntegerField()
+    count = serializers.IntegerField()
 
     class Meta:
         model = Tag
@@ -57,8 +58,12 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="blog:comment-detail")
+    id = serializers.IntegerField()
     post = serializers.HyperlinkedRelatedField(
-        view_name="blog:post-detail", queryset=Post.published.all()
+        read_only=True, view_name="blog:post-detail"
+    )
+    post_id = serializers.PrimaryKeyRelatedField(
+        queryset=Post.published.all().values_list("id", flat=True)
     )
 
     class Meta:
@@ -68,6 +73,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="blog:project-detail")
+    id = serializers.IntegerField()
 
     class Meta:
         model = Project
