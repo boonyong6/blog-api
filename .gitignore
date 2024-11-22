@@ -164,3 +164,4 @@ cython_debug/
 # Local
 run-*.sh
 mysite/mysite_data.json
+mysite/public/media/

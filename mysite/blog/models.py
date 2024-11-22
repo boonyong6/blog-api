@@ -7,12 +7,20 @@ from taggit.managers import TaggableManager
 # from django.db.models.functions import Now
 
 
+class TimeStampedModel(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
 class PublishedManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=Post.Status.PUBLISHED)
 
 
-class Post(models.Model):
+class Post(TimeStampedModel):
     class Status(models.TextChoices):  # Enum type (choices)
         DRAFT = "DF", "Draft"
         PUBLISHED = "PB", "Published"
@@ -30,8 +38,6 @@ class Post(models.Model):
     body = models.TextField()  # TEXT column
     publish = models.DateTimeField(default=timezone.now)  # DATETIME column
     # publish = models.DateTimeField(db_default=Now())  # Database-computed (introduced in Django 5)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2, choices=Status, default=Status.DRAFT)
     summary = models.TextField(default="")
 
@@ -64,14 +70,12 @@ class Post(models.Model):
         )
 
 
-class Comment(models.Model):
+class Comment(TimeStampedModel):
     # One post can have many comments.
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     name = models.CharField(max_length=80)
     email = models.EmailField()
     body = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)  # Controls the status of the comment.
 
     class Meta:
@@ -83,3 +87,16 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.name} on {self.post}"
+
+
+class Project(TimeStampedModel):
+    title = models.CharField(max_length=250)
+    description = models.TextField()
+    link = models.URLField(max_length=200)
+    # Subclass of `FileField`.
+    #   `upload_to` arg accepts callable.
+    #   Use `{{ object.thumbnail.url }}` to get the absolute path in a template.
+    thumbnail = models.ImageField(upload_to="images/")
+
+    def __str__(self):
+        return self.title
