@@ -9,7 +9,7 @@ from . import serializers_utils
 class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
     url = serializers_utils.PostHyperlink(view_name="blog:post-detail")
     url_alt = serializers.HyperlinkedIdentityField(view_name="blog:post-detail")
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     author = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="username"
     )
@@ -48,7 +48,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="blog:tag-detail", lookup_field="slug"
     )
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     count = serializers.IntegerField()
 
     class Meta:
@@ -58,7 +58,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="blog:comment-detail")
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     post = serializers.HyperlinkedRelatedField(
         read_only=True, view_name="blog:post-detail"
     )
@@ -73,7 +73,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="blog:project-detail")
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Project
