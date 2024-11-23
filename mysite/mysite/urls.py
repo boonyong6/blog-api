@@ -37,4 +37,5 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    path("markdownx/", include("markdownx.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

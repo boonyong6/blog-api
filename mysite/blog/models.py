@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
+from markdownx.models import MarkdownxField
 
 # from django.db.models.functions import Now
 
@@ -35,7 +36,7 @@ class Post(TimeStampedModel):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blog_posts"
     )
-    body = models.TextField()  # TEXT column
+    body = MarkdownxField()  # TEXT column
     publish = models.DateTimeField(default=timezone.now)  # DATETIME column
     # publish = models.DateTimeField(db_default=Now())  # Database-computed (introduced in Django 5)
     status = models.CharField(max_length=2, choices=Status, default=Status.DRAFT)
@@ -96,7 +97,8 @@ class Project(TimeStampedModel):
     # Subclass of `FileField`.
     #   `upload_to` arg accepts callable.
     #   Use `{{ object.thumbnail.url }}` to get the absolute path in a template.
-    thumbnail = models.ImageField(upload_to="images/")
+    # ! Saving and loading images from a single large directory would slow down the system.
+    thumbnail = models.ImageField(upload_to="images/")  # TODO: Store by date.
 
     def __str__(self):
         return self.title
