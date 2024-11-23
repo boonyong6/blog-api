@@ -98,7 +98,7 @@ class Project(TimeStampedModel):
     #   `upload_to` arg accepts callable.
     #   Use `{{ object.thumbnail.url }}` to get the absolute path in a template.
     # ! Saving and loading images from a single large directory would slow down the system.
-    thumbnail = models.ImageField(upload_to="images/")  # TODO: Store by date.
+    thumbnail = models.ImageField(upload_to="images/%Y/%m/%d/")
 
     def __str__(self):
         return self.title
