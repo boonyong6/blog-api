@@ -1,4 +1,6 @@
+from django.db import models
 from django.contrib import admin
+from martor.widgets import AdminMartorWidget
 from .models import Comment, Post, Project
 
 
@@ -7,6 +9,9 @@ from .models import Comment, Post, Project
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
+    class Media:
+        css = {"all": ["css/custom-martor-admin.css"]}
+
     list_display = ["title", "slug", "author", "publish", "status"]
     list_filter = ["status", "created", "publish", "author"]
     search_fields = ["title", "body"]  # Search bar
@@ -15,6 +20,9 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = "publish"  # Date breadcrumbs (below search bar)
     ordering = ["status", "publish"]  # Overrides the default sort order of the model.
     show_facets = admin.ShowFacets.ALWAYS  # Object counts for each filter.
+    formField_overrides = {
+        models.TextField: {"widget": AdminMartorWidget},
+    }
 
 
 @admin.register(Comment)

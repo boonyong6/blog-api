@@ -19,6 +19,7 @@
     "linebreaks",
     "loaddata",
     "makemigrations",
+    "martor",
     "mysite",
     "psycopg",
     "pubdate",
