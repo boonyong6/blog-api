@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "blog.apps.BlogConfig",  # Activate the app by registering its config.
-    "markdownx",  # Placed after `blog` app so that `widget.html` can be overriden.
 ]
 
 MIDDLEWARE = [

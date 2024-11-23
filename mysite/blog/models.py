@@ -3,7 +3,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
-from markdownx.models import MarkdownxField
 
 # from django.db.models.functions import Now
 
@@ -36,7 +35,7 @@ class Post(TimeStampedModel):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blog_posts"
     )
-    body = MarkdownxField()  # TEXT column
+    body = models.TextField()  # TEXT column
     publish = models.DateTimeField(default=timezone.now)  # DATETIME column
     # publish = models.DateTimeField(db_default=Now())  # Database-computed (introduced in Django 5)
     status = models.CharField(max_length=2, choices=Status, default=Status.DRAFT)
