@@ -3,7 +3,7 @@ from typing import cast
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
@@ -166,6 +166,7 @@ class CommentViewSet(
 
     queryset = Comment.objects.filter(active=True)
     serializer_class = CommentSerializer
+    permission_classes = [permissions.AllowAny]  # Or []
 
     def get_queryset(self):
         post_id = cast(Request, self.request).query_params.get("post_id")

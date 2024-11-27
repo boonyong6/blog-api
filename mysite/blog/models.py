@@ -74,8 +74,8 @@ class Post(TimeStampedModel):
 class Comment(TimeStampedModel):
     # One post can have many comments.
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    name = models.CharField(max_length=80)
-    email = models.EmailField()
+    name = models.CharField(max_length=80, blank=True)
+    email = models.EmailField(blank=True)
     body = models.TextField()
     active = models.BooleanField(default=True)  # Controls the status of the comment.
 
@@ -99,6 +99,9 @@ class Project(TimeStampedModel):
     #   Use `{{ object.thumbnail.url }}` to get the absolute path in a template.
     # ! Saving and loading images from a single large directory would slow down the system.
     thumbnail = models.ImageField(upload_to="images/%Y/%m/%d/")
+
+    class Meta:
+        ordering = ["-id"]
 
     def __str__(self):
         return self.title
