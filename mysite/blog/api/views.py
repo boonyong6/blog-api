@@ -182,4 +182,3 @@ class CommentViewSet(
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    pagination_class = staticmethod(partial(DynamicPageNumberPagination, page_size=1))
