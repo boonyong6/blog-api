@@ -1,23 +1,25 @@
 from functools import partial
 from typing import cast
-from django.shortcuts import get_object_or_404
-from django.db.models import Count
+
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import viewsets, mixins, permissions
+from django.db.models import Count
+from django.shortcuts import get_object_or_404
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from taggit.models import Tag
+
+from ..models import Comment, Post, Project
+from .pagination import DynamicPageNumberPagination
 from .serializers import (
+    CommentSerializer,
     PostSerializer,
     ProjectSerializer,
     TagSerializer,
-    CommentSerializer,
 )
 from .views_utils import get_pagable_response
-from .pagination import DynamicPageNumberPagination
-from ..models import Post, Comment, Project
 
 
 # ViewSets define the view behavior.
@@ -135,7 +137,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
             taggit_taggeditem_items__object_id__in=post_ids,
         )
         .annotate(count=Count("*"))
-        .order_by("-count")
+        .order_by("-count", "name")
     )
     serializer_class = TagSerializer
     lookup_field = "slug"

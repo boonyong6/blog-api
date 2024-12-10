@@ -1,8 +1,8 @@
-from django.db import models
 from django.contrib import admin
+from django.db import models
 from martor.widgets import AdminMartorWidget
-from .models import Comment, Post, Project
 
+from .models import Comment, Post, Project
 
 # Register your models here.
 
@@ -18,7 +18,7 @@ class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ["author"]  # User lookup widget
     date_hierarchy = "publish"  # Date breadcrumbs (below search bar)
-    ordering = ["status", "publish"]  # Overrides the default sort order of the model.
+    # ordering = ["status", "publish"]  # Overrides the default sort order of the model.
     show_facets = admin.ShowFacets.ALWAYS  # Object counts for each filter.
     formField_overrides = {
         models.TextField: {"widget": AdminMartorWidget},
