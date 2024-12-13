@@ -11,3 +11,4 @@ django-filter==24.3
 django-cors-headers==4.6.0
 pillow==11.0.0
 martor==1.6.45
+coverage==7.6.9
