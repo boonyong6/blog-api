@@ -11,7 +11,7 @@ MARTOR_ENABLE_CONFIGS = {
     "mention": "false",  # to enable/disable mention
     "jquery": "true",  # to include/revoke jquery (require for admin default django)
     "living": "false",  # to enable/disable live updates in preview
-    "spellcheck": "false",  # to enable/disable spellcheck in form textareas
+    "spellcheck": "true",  # to enable/disable spellcheck in form textareas
     "hljs": "true",  # to enable/disable hljs highlighting in preview
 }
 
