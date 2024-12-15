@@ -1,9 +1,8 @@
 from django.conf import settings  # Project's settings
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
-from taggit.managers import TaggableManager
 from martor.models import MartorField
+from taggit.managers import TaggableManager
 
 # from django.db.models.functions import Now
 
@@ -63,12 +62,7 @@ class Post(TimeStampedModel):
 
     # Canonical URL - preferred/most representative/main URL for a resource.
     def get_absolute_url(self):
-        # `reverse()` is a URL resolver that build the URL dynamically using
-        #   the URL name defined in the `blog/urls.py`.
-        return reverse(
-            "blog:post_detail",
-            args=[self.publish.year, self.publish.month, self.publish.day, self.slug],
-        )
+        return f"/posts/{self.publish.year}/{self.publish.month}/{self.publish.day}/{self.slug}"
 
 
 class Comment(TimeStampedModel):

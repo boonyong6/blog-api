@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import json
 from pathlib import Path
+
 from decouple import config
+
 from .settings_martor import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -68,7 +70,10 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [Path(BASE_DIR, "templates")],
+        "DIRS": [
+            BASE_DIR / "templates",
+            BASE_DIR / "public/static/dist/ng-blog/browser/",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -137,6 +142,10 @@ MEDIA_URL = "media/"
 
 STATIC_ROOT = Path(BASE_DIR, "public", "static")
 MEDIA_ROOT = Path(BASE_DIR, "public", "media")
+
+STATICFILES_DIRS = [
+    BASE_DIR / "public/static/dist/ng-blog/browser/",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
-from django.urls import reverse
 from taggit.models import Tag
+
 from .models import Post
 
 
@@ -23,4 +23,4 @@ class TagSitemap(Sitemap):
         return Tag.objects.all()
 
     def location(self, obj: Tag):
-        return reverse("blog:post_list_by_tag", args=[obj.slug])
+        return f"/tags/{obj.slug}/page/1"

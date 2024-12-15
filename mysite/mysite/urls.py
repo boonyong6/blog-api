@@ -15,12 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from blog.sitemaps import PostSitemap, TagSitemap
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
-from django.urls import path, include
-from blog.sitemaps import PostSitemap, TagSitemap
+from django.urls import include, path, re_path
+from django.views.generic import TemplateView
 
 sitemaps = {
     "posts": PostSitemap,
@@ -28,7 +29,6 @@ sitemaps = {
 }
 
 urlpatterns = [
-    # path("", views.home, name="home"),
     path("", include("blog.urls", namespace="blog")),
     path("admin/", admin.site.urls),
     path(
@@ -39,3 +39,7 @@ urlpatterns = [
     ),
     path("martor/", include("martor.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns.append(
+    re_path("^.*$", TemplateView.as_view(template_name="index.html"), name="ng-blog")
+)
