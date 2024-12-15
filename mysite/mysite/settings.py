@@ -72,7 +72,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             BASE_DIR / "templates",
-            BASE_DIR / "public/static/dist/ng-blog/browser/",
+            BASE_DIR / "public/dist/ng-blog/browser/",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -144,7 +144,7 @@ STATIC_ROOT = Path(BASE_DIR, "public", "static")
 MEDIA_ROOT = Path(BASE_DIR, "public", "media")
 
 STATICFILES_DIRS = [
-    BASE_DIR / "public/static/dist/ng-blog/browser/",
+    BASE_DIR / "public/dist/ng-blog/browser/",
 ]
 
 # Default primary key field type
